@@ -63,14 +63,40 @@ const updateDatoUrlInString  = function (str, successLogs) {
   if (imagesArray && imagesArray.length >= 1) {
     imagesArray.forEach(image => {
         if (image.dataset && image.dataset.src && image.dataset.src.includes("sites/")) {
-            const obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === image.dataset.src.split("sites/")[1]);
+            let obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === image.dataset.src.split("sites/")[1]);
+
+            if(!obj) {
+                obj = successLogs.find(element => image.dataset.src.split("sites/")[1].includes(element.attachment_url.split("sites/")[1].split(".")[0]) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => image.dataset.src.split("sites/")[1].toLowerCase().includes(element.attachment_url.split("sites/")[1].split(".")[0].toLowerCase()) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => element.attachment_url.split("sites/")[1].toLowerCase().includes(image.dataset.src.split("sites/")[1].toLowerCase().split(".")[0]) );
+            }
+
             if (obj) {
                 image.removeAttribute("data-src");
                 image.src = obj.datoCMSUrl
             }
         };
         if (image.src && image.src.includes("sites/")) {
-            const obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === image.src.split("sites/")[1]);
+            let obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === image.src.split("sites/")[1]);
+
+            if(!obj) {
+                obj = successLogs.find(element => image.src.split("sites/")[1].includes(element.attachment_url.split("sites/")[1].split(".")[0]) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => image.src.split("sites/")[1].toLowerCase().includes(element.attachment_url.split("sites/")[1].split(".")[0].toLowerCase()) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => element.attachment_url.split("sites/")[1].toLowerCase().includes(image.src.split("sites/")[1].toLowerCase().split(".")[0]) );
+            }
+
             if (obj) {
                 image.src = obj.datoCMSUrl
             }
@@ -81,7 +107,20 @@ const updateDatoUrlInString  = function (str, successLogs) {
   if (linkArray && linkArray.length >= 1) {
     linkArray.forEach(link => {
         if (link.href && link.href.includes("sites/")) {
-            const obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === link.href.split("sites/")[1]);
+            let obj = successLogs.find(element => element.attachment_url.split("sites/")[1] === link.href.split("sites/")[1]);
+
+            if(!obj) {
+                obj = successLogs.find(element => link.href.split("sites/")[1].includes(element.attachment_url.split("sites/")[1].split(".")[0]) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => link.href.split("sites/")[1].toLowerCase().includes(element.attachment_url.split("sites/")[1].toLowerCase().split(".")[0]) );
+            }
+
+            if(!obj) {
+                obj = successLogs.find(element => element.attachment_url.split("sites/")[1].toLowerCase().includes(link.href.split("sites/")[1].toLowerCase().split(".")[0]) );
+            }
+
             if (obj) {
                 link.href = obj.datoCMSUrl;
                 link.target = "_blank"
@@ -118,11 +157,51 @@ const xml2jsonConverter = (locale) => {
 
 }
 
+const grabNonXMLImages = () => {
+    fs.readdir('output/elasticData/updated/en/test', (err, files) => {
+        let imagesArray = [];
+        files.forEach(file => {
+          let data = fs.readFileSync(`output/elasticData/updated/en/test/${file}`);
+          data = JSON.parse(data);
+          data.forEach(record => {
+            if(record.content) {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(record.content, 'text/html');
+                const images = doc.body.querySelectorAll("img");
+                const linkArray = doc.body.querySelectorAll("a");
+                images.forEach(image => {
+                    if (image.dataset && image.dataset.src && image.dataset.src.includes("assets/media/content/sites")) {
+                        imagesArray = [...imagesArray, { folderName: file, src: image.dataset.src, alt: image.alt || null, extension: image.dataset.src.split(".")[1], type: "image", fileName: (() => { let imageName = image.dataset.src.split(".")[0].split("/"); imageName = imageName[imageName.length - 1]; return imageName })() }]
+                    };
+                    if (image.src && image.src.includes("assets/media/content/sites")) {
+                        imagesArray = [...imagesArray, { folderName: file, src: image.src, alt: image.alt || null, extension: image.src.split(".")[1], type: "image", fileName:  (() => { let imageName = image.src.split(".")[0].split("/"); imageName = imageName[imageName.length - 1]; return imageName })()}]
+                    }
+                });
+                if (linkArray && linkArray.length >= 1) {
+                    linkArray.forEach(link => {
+                        if (link.href && link.href.includes("assets/media/content/sites")) {
+                            imagesArray = [...imagesArray, { folderName: file, src: link.href, type: "link", extension: link.href.split(".")[1], fileName:  (() => { let imageName = link.href.split(".")[0].split("/"); imageName = imageName[imageName.length - 1]; return imageName })() }]
+                        }
+                    })
+                } 
+            }
+          });
+        });
+        fs.writeFileSync(`output/elasticData/updated/en/test/nonXML.json`, JSON.stringify(imagesArray), 'utf8' );
+      });
+}
+
+
+
+
+
+
 module.exports = {
     mapJsonContent,
     fetchFromElastic,
     updateDatoUrlInString,
-    xml2jsonConverter
+    xml2jsonConverter,
+    grabNonXMLImages
 }
 
 

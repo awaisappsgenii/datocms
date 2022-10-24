@@ -3,12 +3,14 @@ const { buildClient } = require('@datocms/cma-client-node');
 const data = require("./exports/wordpressJson/es.json");
 
 const englishSuccessLogs = require("./output/temp/en_successLogs.json");
+const germanSuccessLogs = require("./output/temp/de_successLogs.json");
+
 const englishErrorLogs = require("./output/temp/en_errorLogs.json");
 
 
 const { mapJsonContent, updateDatoUrlInString, xml2jsonConverter } = require('./utils/helpers');
 const wordpressMediaJson = require("./exports/wordpressMappedJson/en.json");
-const { fetchFromElastic } = require('./utils/helpers');
+const { fetchFromElastic, grabNonXMLImages } = require('./utils/helpers');
 const successLogs = require("./output/successLogs.json");
 
 const elasticData = require("./output/elasticData/category_es.json");
@@ -160,18 +162,22 @@ function handleProgress(info) {
 
   // console.log(updateDatoUrlInString(myString, successLogs));
 
-  fs.readdir('./output/elasticData/en', (err, files) => {
-    files.forEach(file => {
-      let data = fs.readFileSync(`output/elasticData/en/${file}`);
-      data = JSON.parse(data);
-      const updatedData = data.map(record => {
-        if(record.content) {
-          const updatedString = updateDatoUrlInString(record.content, englishSuccessLogs);
-          return {...record, content: updatedString}
-        } else {
-          return {...record}
-        }
-      });
-      fs.writeFileSync(`output/elasticData/updated/en/${file}`, JSON.stringify(updatedData), 'utf8' );
-    });
-  });
+  //Run below to add datourl in content
+
+  // fs.readdir('./output/elasticData/en', (err, files) => {
+  //   files.forEach(file => {
+  //     let data = fs.readFileSync(`output/elasticData/en/${file}`);
+  //     data = JSON.parse(data);
+  //     const updatedData = data.map(record => {
+  //       if(record.content) {
+  //         const updatedString = updateDatoUrlInString(record.content, [...germanSuccessLogs, ...englishSuccessLogs]);
+  //         return {...record, content: updatedString}
+  //       } else {
+  //         return {...record}
+  //       }
+  //     });
+  //     fs.writeFileSync(`output/elasticData/updated/en/test/${file}`, JSON.stringify(updatedData), 'utf8' );
+  //   });
+  // });
+
+  grabNonXMLImages()

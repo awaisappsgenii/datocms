@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Dickenhobel",
+    "link": "http://wp-prd.trademachines.com/de/tm-category/holzbearbeitungsmaschinen/hobelmaschinen-fenstertechnik/dickenhobelmaschinen/dickenhobel/",
+    "guid": "http://trademachines.com/de/wp-content/uploads/sites/3/2014/02/Dickenhobel.jpeg",
+    "post_id": "8313",
+    "attachment_url": "http://wp-prd.trademachines.com/de/wp-content/uploads/sites/3/2014/02/Dickenhobel.jpeg",
+    "alt": "Dickenhobel SCHEPPACH HM2",
+    "errorMessage": "Response code 404 (Not Found)"
+  },
+  {
+    "title": "Forstschlepper",
+    "link": "http://wp-prd.trademachines.com/de/tm-category/agrarmaschinen/forsttechnik/forstschlepper/forstschlepper-2/",
+    "guid": "http://trademachines.com/de/wp-content/uploads/sites/3/2014/04/Forstschlepper.jpeg",
+    "post_id": "8327",
+    "attachment_url": "http://wp-prd.trademachines.com/de/wp-content/uploads/sites/3/2014/04/Forstschlepper.jpeg",
+    "alt": "Forstschlepper Mb Trac 800",
+    "errorMessage": "Response code 404 (Not Found)"
+  },
+  {
+    "title": "metabo bandsäge",
+    "link": "http://wp-prd.trademachines.com/de/tm-category/holzbearbeitungsmaschinen/holzsaegen/bandsaegen/metabo-bandsage/",
+    "guid": "http://trademachines.com/de/wp-content/uploads/sites/3/2014/11/metabo-bandsäge.jpg",
+    "post_id": "9219",
+    "attachment_url": "http://wp-prd.trademachines.com/de/wp-content/uploads/sites/3/2014/11/metabo-bandsäge.jpg",
+    "alt": "metabo bandsäge",
+    "errorMessage": "Response code 404 (Not Found)"
+  },
+  {
+    "link": "http://wp-prd.trademachines.com/de/tm-category/agrarmaschinen/erntemaschinen/mahdrescher-2/",
+    "guid": "http://trademachines.com/de/wp-content/uploads/sites/3/2014/05/Mähdrescher.jpg",
+    "post_id": "10306",
+    "attachment_url": "http://wp-prd.trademachines.com/de/wp-content/uploads/sites/3/2014/05/Mähdrescher.jpg",
+    "errorMessage": "POST https://site-api.datocms.com/uploads: 422 N/A\n\n[\n  {\n    \"id\": \"d94c98\",\n    \"type\": \"api_error\",\n    \"attributes\": {\n      \"code\": \"INVALID_FIELD\",\n      \"details\": {\n        \"field\": \"default_field_metadata.de\",\n        \"code\": \"INVALID_FORMAT\",\n        \"message\": \"Must contain alt, title and custom_data\"\n      }\n    }\n  }\n]"
+  },
+  {
+    "link": "http://wp-prd.trademachines.com/de/tm-manufacturer/schechtl/manuelle-tafelschere-schlechtl/",
+    "guid": "http://trademachines.com/de/wp-content/uploads/sites/3/2014/04/Manuelle-Tafelschere-Schlechtl.jpg",
+    "post_id": "18249",
+    "attachment_url": "http://wp-prd.trademachines.com/de/wp-content/uploads/sites/3/2014/04/Manuelle-Tafelschere-Schlechtl.jpg",
+    "alt": "Manuelle-Tafelschere-Schlechtl",
+    "errorMessage": "POST https://site-api.datocms.com/uploads: 422 N/A\n\n[\n  {\n    \"id\": \"d94c98\",\n    \"type\": \"api_error\",\n    \"attributes\": {\n      \"code\": \"INVALID_FIELD\",\n      \"details\": {\n        \"field\": \"default_field_metadata.de\",\n        \"code\": \"INVALID_FORMAT\",\n        \"message\": \"Must contain alt, title and custom_data\"\n      }\n    }\n  }\n]"
+  }
+]
