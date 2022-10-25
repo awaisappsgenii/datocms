@@ -4,16 +4,27 @@ const data = require("./exports/wordpressJson/es.json");
 
 const englishSuccessLogs = require("./output/temp/en_successLogs.json");
 const germanSuccessLogs = require("./output/temp/de_successLogs.json");
+const spanishSuccessLogs = require("./output/temp/es_successLogs.json");
+const frenchSuccessLogs = require("./output/temp/fr_successLogs.json");
+const italianSuccessLogs = require("./output/temp/it_successLogs.json");
+const polishSuccessLogs = require("./output/temp/pl_successLogs.json");
+const nonXMLSuccessLogs = require("./output/temp/nonXML_successLogs.json");
+
+
+let germanNonXML = require("./output/elasticData/updated/de/nonXML_de.json");
+let englishNonXML = require("./output/elasticData/updated/en/nonXML_en.json");
+let spanishNonXML = require("./output/elasticData/updated/es/nonXML_es.json");
+
 
 const englishErrorLogs = require("./output/temp/en_errorLogs.json");
 
 
 const { mapJsonContent, updateDatoUrlInString, xml2jsonConverter } = require('./utils/helpers');
-const wordpressMediaJson = require("./exports/wordpressMappedJson/en.json");
+let wordpressMediaJson = require("./exports/wordpressMappedJson/pl.json");
 const { fetchFromElastic, grabNonXMLImages } = require('./utils/helpers');
 const successLogs = require("./output/successLogs.json");
 
-const elasticData = require("./output/elasticData/category_es.json");
+// const elasticData = require("./output/elasticData/category_es.json");
 
 const fs = require('fs');
 const moment = require('moment');
@@ -25,6 +36,15 @@ const errorUrls = [];
 const successfulUrls = [];
 
 const bulkMediaUploader = async () => {
+
+  // germanNonXML = germanNonXML.map(element => ({...element, attachment_url: `https://trademachines.com${element.src}`, title: element.fileName, language: "de" }))
+
+  // englishNonXML = englishNonXML.map(element => ({...element, attachment_url: `https://trademachines.com${element.src}`, title: element.fileName, language: "en" }))
+
+  // spanishNonXML = spanishNonXML.map(element => ({...element, attachment_url: `https://trademachines.com${element.src}`, title: element.fileName, language: "es" }))
+
+  // wordpressMediaJson = [...englishNonXML,...spanishNonXML,...germanNonXML]
+
   console.log(`started at ${moment().format('llll')} for ${wordpressMediaJson.length} records` );
   const startedTime = moment().valueOf();
   // await Promise.all(wordpressMediaJson.map(async (element,index) => {
@@ -50,11 +70,11 @@ const bulkMediaUploader = async () => {
     await run(element, index)
   };
 
-  // await Promise.all(wordpressMediaJson.map(async (element,index) => {
-  //   // if (index <= 5) {
-  //     await run(element, index)
-  //   // }
-  // }));
+  await Promise.all(wordpressMediaJson.map(async (element,index) => {
+    // if (index <= 5) {
+      await run(element, index)
+    // }
+  }));
 
   console.log("ended at " + moment().format('llll'));
   const endedTime = moment().valueOf();
@@ -107,7 +127,7 @@ function handleProgress(info) {
         // onProgress: handleProgress,
         // specify some additional metadata to the upload resource
         default_field_metadata: {
-          es: {
+          [element.language]: {
             alt: element.alt || element.title,
             title: element.title,
             custom_data: {
@@ -117,14 +137,14 @@ function handleProgress(info) {
       });
       // successfulUrls.push({...element, datoCMSUrl: response.url, response});
       successfulUrls.push({...element, datoCMSUrl: response.url, datoImageId: response.id});
-      fs.appendFileSync('output/temp/es_successLogs.txt', `${JSON.stringify({...element, datoCMSUrl: response.url, datoImageId: response.id})},`);
+      fs.appendFileSync('output/temp/nonXML_successLogs.txt', `${JSON.stringify({...element, datoCMSUrl: response.url, datoImageId: response.id})},`);
       // if (response) {  console.log(response.path)}
       // fs.writeFileSync("output/temp_en_successLogs.json", successfulUrls, 'utf8' );
       console.log(successfulUrls.length + " uploaded successfully");
     } catch (error) {
       console.log("error found", error.message);
       errorUrls.push({ ...element, errorMessage: error.message});
-      fs.appendFileSync('output/temp/es_errorLogs.txt', `${JSON.stringify({ ...element, errorMessage: error.message})},`);
+      fs.appendFileSync('output/temp/nonXML_errorLogs.txt', `${JSON.stringify({ ...element, errorMessage: error.message})},`);
       // fs.writeFileSync("output/temp_en_errorLogs.json", errorUrls, 'utf8' );
     }
   };
@@ -162,22 +182,48 @@ function handleProgress(info) {
 
   // console.log(updateDatoUrlInString(myString, successLogs));
 
-  //Run below to add datourl in content
+  // Run below to add datourl in content
 
-  // fs.readdir('./output/elasticData/en', (err, files) => {
+  languages.forEach(language => {
+    fs.readdir(`./output/elasticData/${language}`, (err, files) => {
+      files.forEach(file => {
+        let data = fs.readFileSync(`output/elasticData/${language}/${file}`);
+        data = JSON.parse(data);
+        const updatedData = data.map(record => {
+          if(record.content) {
+            const updatedString = updateDatoUrlInString(record.content, [...germanSuccessLogs, ...englishSuccessLogs, ...italianSuccessLogs, ...polishSuccessLogs, ...spanishSuccessLogs, ...frenchSuccessLogs,...nonXMLSuccessLogs]);
+            return {...record, content: updatedString}
+          } else {
+            return {...record}
+          }
+        });
+        fs.writeFileSync(`output/elasticData/updated/${language}/${file}`, JSON.stringify(updatedData), 'utf8' );
+      });
+    });
+  
+    grabNonXMLImages(language)
+
+  })
+
+
+
+  // fs.readdir(`./output/elasticData/de`, (err, files) => {
   //   files.forEach(file => {
   //     let data = fs.readFileSync(`output/elasticData/en/${file}`);
   //     data = JSON.parse(data);
   //     const updatedData = data.map(record => {
   //       if(record.content) {
-  //         const updatedString = updateDatoUrlInString(record.content, [...germanSuccessLogs, ...englishSuccessLogs]);
+  //         const updatedString = updateDatoUrlInString(record.content, [...germanSuccessLogs, ...englishSuccessLogs, ...italianSuccessLogs, ...polishSuccessLogs, ...spanishSuccessLogs, ...frenchSuccessLogs]);
   //         return {...record, content: updatedString}
   //       } else {
   //         return {...record}
   //       }
   //     });
-  //     fs.writeFileSync(`output/elasticData/updated/en/test/${file}`, JSON.stringify(updatedData), 'utf8' );
+  //     fs.writeFileSync(`output/elasticData/updated/en/${file}`, JSON.stringify(updatedData), 'utf8' );
   //   });
   // });
 
-  grabNonXMLImages()
+  // grabNonXMLImages('de')
+
+
+// console.log([...englishNonXML,...spanishNonXML,...germanNonXML].length);

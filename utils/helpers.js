@@ -157,11 +157,11 @@ const xml2jsonConverter = (locale) => {
 
 }
 
-const grabNonXMLImages = () => {
-    fs.readdir('output/elasticData/updated/en/test', (err, files) => {
+const grabNonXMLImages = (language) => {
+    fs.readdir(`output/elasticData/updated/${language}`, (err, files) => {
         let imagesArray = [];
         files.forEach(file => {
-          let data = fs.readFileSync(`output/elasticData/updated/en/test/${file}`);
+          let data = fs.readFileSync(`output/elasticData/updated/${language}/${file}`);
           data = JSON.parse(data);
           data.forEach(record => {
             if(record.content) {
@@ -187,7 +187,7 @@ const grabNonXMLImages = () => {
             }
           });
         });
-        fs.writeFileSync(`output/elasticData/updated/en/test/nonXML.json`, JSON.stringify(imagesArray), 'utf8' );
+        fs.writeFileSync(`output/elasticData/updated/${language}/nonXML.json`, JSON.stringify(imagesArray), 'utf8' );
       });
 }
 
